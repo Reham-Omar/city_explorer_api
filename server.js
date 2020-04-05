@@ -36,13 +36,13 @@ function Location(city, geoData) {
 
 
 server.get('/weather', (req, res) => {
-    let weatherData = getWeather(req.query.data);
+    let weatherData = getWeather(req.query.city);
     res.status(200).json(weatherData);
 
     })
 function getWeather(city) {
-    const weatherData = require('./data/weather.json');
-    const eachDayArray = weatherData.data[0].datetime;
+    const getData = require('./data/weather.json');
+    const eachDayArray = getData.data[0].datetime;
     eachDayArray.foreach(val=>{
         return new Weather(val);
     })
