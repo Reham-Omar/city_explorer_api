@@ -37,7 +37,7 @@ function Location(city, geoData) {
 
 server.get('/weather', (req, res) => {
     let arrayOfWeather=[];
-    // const weatherCity = req.query.city;
+    const weatherCity = req.query.city;
     const getData = require('./data/weather.json');
     getData.foreach((val,index) =>{
         let theWeather =new Weather(val,index);
