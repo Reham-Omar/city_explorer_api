@@ -27,6 +27,20 @@ function Location (city,geoData) {
     
 }
 
+server.get('/weather', (req, res) => {
+    const weatherData = require('./data/weather.json');
+    const city = req.query.city;
+    const dataOfWeather = new Weather(city,weatherData);
+    res.send(dataOfWeather);
+
+})
+function Weather (city,weatherData) {
+    this.search_query = city;
+    this.description = weatherData.data[0].description;
+    this.time = weatherData.data[0].datetime;
+   
+    
+}
 
 server.use('*', (req, res) => {
     res.status(404).send('Not Found ');
