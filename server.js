@@ -51,7 +51,7 @@ server.get('/weather', (req, res) => {
 
 function Weather(datetime,index) {
     this.description = datetime.data[index].weather.description;
-    this.time = datetime.data[index].datetime;
+    this.time = datetime.data[index].valid_date;
 }
 
 // ------------------------
