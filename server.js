@@ -12,39 +12,49 @@ server.listen(PORT, () => {
 server.get('/', (req, res) => {
     res.status(200).send('It works ');
 })
+// ----------------------------------
+// LOCATION
+// -----------------------------------
+
 server.get('/location', (req, res) => {
     const geoData = require('./data/geo.json');
     const city = req.query.city;
-    const locationData = new Location(city,geoData);
-    res.send(locationData);
+    const locationData = new Location(city, geoData);
+    res.status(200).send(locationData);
 
 })
-function Location (city,geoData) {
+function Location(city, geoData) {
     this.search_query = city;
     this.formatted_query = geoData[0].display_name;
     this.latitude = geoData[0].lat;
     this.longitude = geoData[0].lon;
-    
+
 }
+// ---------------------------
+// Weather
+// --------------------------
+
 
 server.get('/weather', (req, res) => {
-    const weatherData = require('./data/weather.json');
-    const city = req.query.city;
-    const dataOfWeather = new Weather(city,weatherData);
-    dataOfWeather.foreach(val=>{
-    weatherArray.push(val);
-    })
-    res.send(weatherArray);
+    let weatherData = getWeather(req.query.data);
+    res.status(200).json(weatherData);
 
-})
-let weatherArray=[];
-function Weather (city,weatherData) {
-    this.search_query = city;
-    this.description = weatherData.data[0].weather.description;
-    this.time = weatherData.data[0].datetime;
-    
-    // this.city_name=weatherData.city_name
+    })
+function getWeather(city) {
+    const weatherData = require('./data/weather.json');
+    const eachDayArray = weatherData.data[0].datetime;
+    eachDayArray.foreach(val=>{
+        return new Weather(val);
+    })
 }
+
+function Weather(val) {
+    this.description = val.data[0].weather.description;
+    this.time = val.data[0].datetime;
+}
+
+// ------------------------
+// --------------------------
 server.use('*', (req, res) => {
     res.status(404).send('Not Found ');
 })
