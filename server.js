@@ -31,15 +31,19 @@ server.get('/weather', (req, res) => {
     const weatherData = require('./data/weather.json');
     const city = req.query.city;
     const dataOfWeather = new Weather(city,weatherData);
-    res.send(dataOfWeather);
+    dataOfWeather.foreach(val=>{
+    weatherArray.push(val);
+    })
+    res.send(weatherArray);
 
 })
+let weatherArray=[];
 function Weather (city,weatherData) {
     this.search_query = city;
-    this.description = weatherData.data[0].description;
+    // this.city_name=weatherData.city_name
+    this.description = weatherData.data[0].weather.description;
     this.time = weatherData.data[0].datetime;
-   
-    
+       
 }
 
 server.use('*', (req, res) => {
