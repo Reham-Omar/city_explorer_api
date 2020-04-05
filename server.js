@@ -22,6 +22,7 @@ server.get('/location', (req, res) => {
 })
 function Location(city, geoData) {
     this.search_query = city;
+    this.search_query = 'Amman',
     this.formatted_query = geoData[0].display_name;
     this.latitude = geoData[0].lat;
     this.longitude = geoData[0].lon;
