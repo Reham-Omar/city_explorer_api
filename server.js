@@ -36,21 +36,22 @@ function Location(city, geoData) {
 
 
 server.get('/weather', (req, res) => {
-    let weatherData = getWeather(req.query.city);
-    res.status(200).json(weatherData);
-
-    })
-function getWeather(city) {
+    let arrayOfWeather=[];
+    const weatherCity = req.query.city;
     const getData = require('./data/weather.json');
-    const eachDayArray = getData.data[0].datetime;
-    eachDayArray.foreach(val=>{
-        return new Weather(val);
+    getData.foreach((val,index) =>{
+        let theWeather =new Weather(val,index);
+        arrayOfWeather.push(theWeather);
+        res.status(200).send(arrayOfWeather);
+    
     })
-}
+       
+})
 
-function Weather(val) {
-    this.description = val.data[0].weather.description;
-    this.time = val.data[0].datetime;
+
+function Weather(datetime,index) {
+    this.description = datetime.data[index].weather.description;
+    this.time = datetime.data[index].datetime;
 }
 
 // ------------------------
