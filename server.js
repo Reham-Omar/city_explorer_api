@@ -40,12 +40,11 @@ server.get('/weather', (req, res) => {
 let weatherArray=[];
 function Weather (city,weatherData) {
     this.search_query = city;
-    // this.city_name=weatherData.city_name
     this.description = weatherData.data[0].weather.description;
     this.time = weatherData.data[0].datetime;
-       
+    
+    // this.city_name=weatherData.city_name
 }
-
 server.use('*', (req, res) => {
     res.status(404).send('Not Found ');
 })
