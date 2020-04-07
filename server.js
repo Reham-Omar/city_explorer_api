@@ -35,24 +35,23 @@ function getlocation(req, res) {
             .then(geoData => {
                 const locationData = new Location(city, geoData.body);
                 
-                res.status(200).json(locationData);
-                console.log('yyyyyyyyyyyyyyyyyyyyyyyy',locationArray);
-                // console.log('wwwwwwwwwwwwwwwwwwwww',locationData);
+                // res.status(200).json(locationData);
+                // console.log('yyyyyyyyyyyyyyyyyyyyyyyy',locationArray);
+                console.log('wwwwwwwwwwwwwwwwwwwww',locationData);
                  
-                // let SQL = 'INSERT INTO locations (search_query , formatted_query, latitude, longitude) VALUES ($1,$2,$3,$4)';
-                // let safeValues = [locationData.search_query, locationData.formatted_query, locationData.latitude, locationData.longitude];
-                // console.log('qqqqqqqqqqqqqqqqqqqqqqqqq',safeValues);
+                let SQL = 'INSERT INTO locations (search_query , formatted_query, latitude, longitude) VALUES ($1,$2,$3,$4)';
+                let safeValues = [locationData.search_query, locationData.formatted_query, locationData.latitude, locationData.longitude]                console.log('qqqqqqqqqqqqqqqqqqqqqqqqq',SQL);
 
-                // client.query(SQL, safeValues)
-                //     .then(results => {
-                //         console.log('reeeeeeeeeeeehaaaaaaam',results);
-                //         var newLocation = results.row[0];
-                //         locationArray[city] = newLocation;
-                //      console.log('yyyyyyyyyy',newLocation);
-                //      console.log('vvvvvvvvvvvvvvvvvvvvvvvv',locationArray[city]);
+                client.query(SQL, safeValues)
+                    .then(results => {
+                        console.log('reeeeeeeeeeeehaaaaaaam',results);
+                        var newLocation = results.row[0];
+                        locationArray[city] = newLocation;
+                     console.log('yyyyyyyyyy',newLocation);
+                     console.log('vvvvvvvvvvvvvvvvvvvvvvvv',locationArray[city]);
                         
-                //         res.status(200).json(newLocation);
-                //     });
+                        res.status(200).json(newLocation);
+                    });
             })
 
     }
@@ -97,40 +96,40 @@ function Weather(getData) {
 // trial
 // ------------------------
 
-server.get('/trails', (req, res) => {
-    let arrayOfTrial = [];
-    let key = process.env.TRAIL_API_KEY;
-    const lat = req.query.lat;
-    const lon = req.query.lon;
+// server.get('/trails', (req, res) => {
+//     let arrayOfTrial = [];
+//     let key = process.env.TRAIL_API_KEY;
+//     const lat = req.query.lat;
+//     const lon = req.query.lon;
 
-    const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=10&key=${key}`;
+//     const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=10&key=${key}`;
 
-    superagent.get(url)
-        .then(getData => {
+//     superagent.get(url)
+//         .then(getData => {
 
-            arrayOfTrial = getData.body.trails.map((val) => {
-                return new Trails(val);
+//             arrayOfTrial = getData.body.trails.map((val) => {
+//                 return new Trails(val);
 
-            })
-            res.status(200).json(arrayOfTrial);
-        })
-})
-
-
-function Trails(getData) {
-    this.name = getData.name;
-    this.location = getData.location;
-    this.length = getData.length;
-    this.stars = getData.stars;
-    this.star_votes = getData.starVotes;
-    this.summary = getData.summary;
-    this.trail_url = getData.url;
-    this.conditions = getData.conditionStatus;
-    this.condition_date = getData.conditionDate.toString().slice(0, 11);
-    this.condition_time = getData.conditionDate.toString().slice(11, 19);
+//             })
+//             res.status(200).json(arrayOfTrial);
+//         })
+// })
 
 
-}
+// function Trails(getData) {
+//     this.name = getData.name;
+//     this.location = getData.location;
+//     this.length = getData.length;
+//     this.stars = getData.stars;
+//     this.star_votes = getData.starVotes;
+//     this.summary = getData.summary;
+//     this.trail_url = getData.url;
+//     this.conditions = getData.conditionStatus;
+//     this.condition_date = getData.conditionDate.toString().slice(0, 11);
+//     this.condition_time = getData.conditionDate.toString().slice(11, 19);
+
+
+// }
 // ----------------------------------
 // ------------------------------------
 server.use('*', (req, res) => {
