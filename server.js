@@ -127,7 +127,6 @@ server.get('/weather', (req, res) => {
     })
 })
 
-
 function Weather(getData) {
   this.description = getData.weather.description;
   this.time = getData.valid_date;
@@ -138,6 +137,7 @@ function Weather(getData) {
 // ------------------------
 
 server.get('/trails', (req, res) => {
+
   let arrayOfTrial = [];
   let key = process.env.TRAIL_API_KEY;
   const lat = req.query.lat;
@@ -154,6 +154,7 @@ server.get('/trails', (req, res) => {
       })
       res.status(200).json(arrayOfTrial);
     })
+
 })
 
 
