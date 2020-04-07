@@ -27,14 +27,14 @@ function locationHandeller(req, res) {
             console.log('hjjjjjjjjjjgfdsdfghjhgfghj', locationData);
             console.log('uuuuuuuuuuuuuuuuuuuuuuuuuu', locationData.latitude);
            
-             latArray=locationData.latitude;
-             lonArray=locationData.latitude;
+            //  latArray=locationData.latitude;
+            //  lonArray=locationData.latitude;
 
         })
 
 }
-let latArray;
-let lonArray;
+// let latArray;
+// let lonArray;
 let locationArray = [];
 function Location(city, geoData) {
     this.search_query = city;
@@ -61,7 +61,6 @@ server.get('/weather', (req, res) => {
             arrayOfWeather = getData.body.data.map((val) => {
                 return new Weather(val);
                 // arrayOfWeather.push(theWeather);
-
             })
             res.status(200).json(arrayOfWeather);
             // console.log(arrayOfWeather);
@@ -82,7 +81,10 @@ function Weather(getData) {
 server.get('/trails', (req, res) => {
     let arrayOfTrial = [];
     let key = process.env.TRAIL_API_KEY;
-    const url = `https://www.hikingproject.com/data/get-trails?lat=${latArray}&lon=${lonArray}&maxDistance=200&key=${key}`;
+    const lat = req.query.lat;
+    const lon = req.query.lon;
+
+    const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=10&key=${key}`;
 
     superagent.get(url)
         .then(getData => {
