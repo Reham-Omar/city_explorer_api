@@ -26,33 +26,34 @@ function getlocation(req, res) {
     const url = `https://eu1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json`;
 
     if (locationArray[city]) {
-        // console.log('daaaaaaaaaaaaaaaaaaaaaaatabaase');
+        console.log('daaaaaaaaaaaaaaaaaaaaaaatabaase');
         res.status(200).json(locationArray[city]);
+
     }
     else {
-        // console.log('AAAAAAAAAAAAAAAAAPPPPPPPPPPPPIIIIIIIII');
+        console.log('AAAAAAAAAAAAAAAAAPPPPPPPPPPPPIIIIIIIII');
         superagent.get(url)
             .then(geoData => {
                 const locationData = new Location(city, geoData.body);
 
                 // res.status(200).json(locationData);
                 // console.log('yyyyyyyyyyyyyyyyyyyyyyyy',locationArray);
-                console.log('wwwwwwwwwwwwwwwwwwwww', locationData);
-
+                
                 let SQL = 'INSERT INTO locations (search_query , formatted_query, latitude, longitude) VALUES ($1,$2,$3,$4) RETURNING *';
                 let safeValues = [locationData.search_query, locationData.formatted_query, locationData.latitude, locationData.longitude];
-                console.log('qqqqqqqqqqqqqqqqqqqqqqqqq', safeValues);
-
+                // console.log('qqqqqqqqqqqqqqqqqqqqqqqqq', safeValues);
+                
                 client.query(SQL, safeValues)
-                    .then(results => {
-                        console.log('reeeeeeeeeeeehaaaaaaam', results);
-                        var newLocation = results.rows;
-                        locationArray[city] = newLocation;
-                        console.log('yyyyyyyyyy', newLocation);
-                        console.log('vvvvvvvvvvvvvvvvvvvvvvvv', locationArray[city]);
-
-                        res.status(200).json(newLocation);
-                    });
+                .then(results => {
+                    // console.log('reeeeeeeeeeeehaaaaaaam', results);
+                    var newLocation = results.rows;
+                    locationArray[city] = newLocation;
+                    // console.log('yyyyyyyyyy', newLocation);
+                    // console.log('vvvvvvvvvvvvvvvvvvvvvvvv', locationArray[city]);
+                    
+                    res.status(200).json(newLocation);
+                    console.log('wwwwwwwwwwwwwwwwwwwww', locationArray);
+                });
             })
 
     }
