@@ -2,46 +2,69 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const pg = require('pg');
 const superagent = require('superagent');
 const PORT = process.env.PORT || 3000;
+const client = new pg.Client(process.env.DATABASE_URL);
 const server = express();
 server.use(cors());
 
 server.get('/', (req, res) => {
     res.status(200).send('It works ');
 })
+
+
 // ----------------------------------
 // LOCATION
 // -----------------------------------
-server.get('/location', locationHandeller);
+let locationArray = {};
+server.get('/location', getlocation);
 
-function locationHandeller(req, res) {
+function getlocation(req, res) {
     const city = req.query.city;
     let key = process.env.GEOCODE_API_KEY;
     const url = `https://eu1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json`;
 
-    superagent.get(url)
-        .then(geoData => {
-            const locationData = new Location(city, geoData.body);
-            res.status(200).json(locationData);
-            console.log('hjjjjjjjjjjgfdsdfghjhgfghj', locationData);
-            console.log('uuuuuuuuuuuuuuuuuuuuuuuuuu', locationData.latitude);
-           
-            //  latArray=locationData.latitude;
-            //  lonArray=locationData.latitude;
+    if (locationArray[city]) {
+        // console.log('daaaaaaaaaaaaaaaaaaaaaaatabaase');
+        res.status(200).json(locationArray[city]);
+    }
+    else {
+        // console.log('AAAAAAAAAAAAAAAAAPPPPPPPPPPPPIIIIIIIII');
+        superagent.get(url)
+            .then(geoData => {
+                const locationData = new Location(city, geoData.body);
+                
+                res.status(200).json(locationData);
+                console.log('yyyyyyyyyyyyyyyyyyyyyyyy',locationArray);
+                // console.log('wwwwwwwwwwwwwwwwwwwww',locationData);
+                 
+                // let SQL = 'INSERT INTO locations (search_query , formatted_query, latitude, longitude) VALUES ($1,$2,$3,$4)';
+                // let safeValues = [locationData.search_query, locationData.formatted_query, locationData.latitude, locationData.longitude];
+                // console.log('qqqqqqqqqqqqqqqqqqqqqqqqq',safeValues);
 
-        })
+                // client.query(SQL, safeValues)
+                //     .then(results => {
+                //         console.log('reeeeeeeeeeeehaaaaaaam',results);
+                //         var newLocation = results.row[0];
+                //         locationArray[city] = newLocation;
+                //      console.log('yyyyyyyyyy',newLocation);
+                //      console.log('vvvvvvvvvvvvvvvvvvvvvvvv',locationArray[city]);
+                        
+                //         res.status(200).json(newLocation);
+                //     });
+            })
+
+    }
 
 }
-// let latArray;
-// let lonArray;
-let locationArray = [];
+
 function Location(city, geoData) {
     this.search_query = city;
     this.formatted_query = geoData[0].display_name;
     this.latitude = geoData[0].lat;
     this.longitude = geoData[0].lon;
-    locationArray.push(this);
+    // locationArray.push(this);
 }
 // ---------------------------
 // Weather
@@ -51,7 +74,6 @@ function Location(city, geoData) {
 server.get('/weather', (req, res) => {
     let arrayOfWeather = [];
     const weatherCity = req.query.city;
-    // const getData = require('./data/weather.json');
     let key = process.env.WEATHER_API_KEY;
     const url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${weatherCity}&key=${key}`;
 
@@ -60,16 +82,13 @@ server.get('/weather', (req, res) => {
 
             arrayOfWeather = getData.body.data.map((val) => {
                 return new Weather(val);
-                // arrayOfWeather.push(theWeather);
             })
             res.status(200).json(arrayOfWeather);
-            // console.log(arrayOfWeather);
         })
 })
 
 
 function Weather(getData) {
-    // this.search_query = weatherCity;
     this.description = getData.weather.description;
     this.time = getData.valid_date;
 }
@@ -117,10 +136,17 @@ function Trails(getData) {
 server.use('*', (req, res) => {
     res.status(500).send('Sorry, something went wrong');
 })
+
 server.use((error, req, res) => {
     res.status(500).send(error);
 })
-server.listen(PORT, () => {
-    console.log(`listening to port ${PORT}`);
-})
 
+// function errorHandler(error, request, response) {
+//     response.status(500).send(error);
+// }
+client.connect()
+    .then(() => {
+        server.listen(PORT, () =>
+            console.log(`listening on ${PORT}`)
+        );
+    })
