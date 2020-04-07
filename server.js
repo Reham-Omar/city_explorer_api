@@ -181,9 +181,6 @@ server.use((error, req, res) => {
   res.status(500).send(error);
 })
 
-// function errorHandler(error, request, response) {
-//     response.status(500).send(error);
-// }
 client.connect()
   .then(() => {
     server.listen(PORT, () =>
