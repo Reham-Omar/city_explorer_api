@@ -84,7 +84,7 @@ server.get('/trails', (req, res) => {
     const lat = req.query.lat;
     const lon = req.query.lon;
     // console.log('hhhhhhhhhhhhhhhhhhhhh',lat);
-    const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=10&key=${key}`;
+    const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=100&key=${key}`;
 
     superagent.get(url)
         .then(getData => {
