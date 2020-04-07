@@ -83,16 +83,17 @@ server.get('/trails', (req, res) => {
     let key = process.env.TRAIL_API_KEY;
     const lat = req.query.lat;
     const lon = req.query.lon;
-
+    // console.log('hhhhhhhhhhhhhhhhhhhhh',lat);
     const url = `https://www.hikingproject.com/data/get-trails?lat=${lat}&lon=${lon}&maxDistance=10&key=${key}`;
 
     superagent.get(url)
         .then(getData => {
-
+        
             arrayOfTrial = getData.body.trails.map((val) => {
                 return new Trails(val);
 
             })
+            console.log('ddddddddddddddddddddd',arrayOfTrial);
             res.status(200).json(arrayOfTrial);
         })
 })
