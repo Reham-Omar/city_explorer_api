@@ -67,7 +67,6 @@ server.get('/weather', (req, res) => {
         })
 })
 
-
 function Weather(getData) {
     // this.search_query = weatherCity;
     this.description = getData.weather.description;
