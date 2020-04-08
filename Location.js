@@ -9,9 +9,9 @@ const PORT = process.env.PORT || 3000;
 const client = new pg.Client(process.env.DATABASE_URL);
 client.connect()
   .then(() => {
-    server.listen(PORT, () =>
-      console.log(`listening on ${PORT}`)
-    );
+    // server.listen(PORT, () =>
+    //   console.log(`listening on ${PORT}`)
+    // );
   })
 
 // -------------------------------------
