@@ -19,7 +19,7 @@ server.get('/location', getlocation);
 function getlocation(request, response) {
   const city = request.query.city;
   console.log(city);
-  const dataBase = 'SELECT search_query FROM locations WHERE search_query = $1'
+  const dataBase = 'SELECT search_query FROM locations WHERE search_query = $1;'
   const safeV = [city];
   client.query(dataBase, safeV).then((result) => {
     if (result.rows.length !== 0) {
@@ -40,7 +40,7 @@ function getlocation(request, response) {
         .then(geoData => {
           const locationData = new Location(city, geoData.body);
 
-          let SQL = 'INSERT INTO locations (search_query , formatted_query, latitude, longitude) VALUES ($1,$2,$3,$4) RETURNING *';
+          let SQL = 'INSERT INTO locations (search_query , formatted_query, latitude, longitude) VALUES ($1,$2,$3,$4) RETURNING *;';
           let safeValues = [locationData.search_query, locationData.formatted_query, locationData.latitude, locationData.longitude];
 
           client.query(SQL, safeValues)
@@ -63,49 +63,6 @@ function Location(city, geoData) {
   this.longitude = geoData[0].lon;
 }
 
-// ----------------------------------
-// LOCATION
-// -----------------------------------
-// let locationArray = {};
-// server.get('/location', getlocation);
-
-// function getlocation(req, res) {
-
-//   const city = req.query.city;
-//   let key = process.env.GEOCODE_API_KEY;
-//   const url = `https://eu1.locationiq.com/v1/search.php?key=${key}&q=${city}&format=json`;
-
-//   if (locationArray[city]) {
-//     res.status(200).json(locationArray[city]);
-
-//   }
-//   else {
-//     superagent.get(url)
-//       .then(geoData => {
-//         const locationData = new Location(city, geoData.body);
-
-//         let SQL = 'INSERT INTO locations (search_query , formatted_query, latitude, longitude) VALUES ($1,$2,$3,$4) RETURNING *';
-//         let safeValues = [locationData.search_query, locationData.formatted_query, locationData.latitude, locationData.longitude];
-
-//         client.query(SQL, safeValues)
-//           .then(results => {
-//             var newLocation = results.rows;
-//             locationArray[city] = newLocation;
-
-//             res.status(200).json(newLocation);
-//           });
-//       })
-
-//   }
-
-// }
-// function Location(city, geoData) {
-//   this.search_query = city;
-//   this.formatted_query = geoData[0].display_name;
-//   this.latitude = geoData[0].lat;
-//   this.longitude = geoData[0].lon;
-//   // locationArray.push(this);
-// }
 // ---------------------------
 // Weather
 // --------------------------
@@ -173,7 +130,60 @@ function Trails(getData) {
 
 }
 // ----------------------------------
+// movies
 // ------------------------------------
+server.get('/movie', (req, res) => {
+  let arrayOfMovies = [];
+  const moviesCity = req.query.query;
+  let key=process.env.MOVIE_API_KEY;
+  const url=`https://api.themoviedb.org/3/search/movie?api_key=${key}&query=${moviesCity}`;
+
+  superagent.get(url)
+    .then(getData => {
+
+      arrayOfMovies = getData.body.results.map((val) => {
+        return new Movie(val);
+      })
+      res.status(200).json(arrayOfMovies);
+    })
+})
+function Movie(getData) {
+  this.title = getData.title;
+  this.overview = getData.overview;
+  this.average_votes=getData.vote_average;
+  this.total_votes=getData.vote_count;
+  this.image_url=getData.poster_path;
+  this.popularity=getData.popularity;
+  this.released_on=getData.release_date;
+}
+// -----------------------------------------
+// yelp
+// --------------------------------------------
+
+server.get('/yelp', (req, res) => {
+  let arrayOfResturant = [];
+  const resCity = req.query.location;
+  const url=`https://api.yelp.com/v3/businesses/search?location=${resCity}`;
+  const key=process.env.YELP_API_KEY;
+  superagent.get(url)
+  .set('Authorization',`Bearer ${key}`)
+    .then(getData => {
+      arrayOfResturant = getData.body.businesses.map((val) => {
+        return new Resturant(val);
+      })
+      res.status(200).json(arrayOfResturant);
+    })
+})
+function Resturant(getData) {
+  this.name = getData.name;
+  this.image_url=getData.image_url;
+  this.price=getData.price;
+  this.rating=getData.rating;
+  this.url = getData.url;
+  }
+
+// ---------------------------------------
+// ---------------------------------------
 server.use('*', (req, res) => {
   res.status(500).send('Sorry, something went wrong');
 })
@@ -188,3 +198,5 @@ client.connect()
       console.log(`listening on ${PORT}`)
     );
   })
+
+  
