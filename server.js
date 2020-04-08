@@ -26,10 +26,6 @@ const myYelp = require('./Yelp.js');
 
 // --------------------------------------------------
 
-server.get('/', (req, res) => {
-  res.status(200).send('It works ');
-})
-
 
 // ----------------------------------------------------
 server.get('/location', myLocation);
