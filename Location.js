@@ -1,6 +1,18 @@
-
+const express = require('express');
+const server = express();
 const superagent = require('superagent');
+const pg = require('pg');
+const PORT = process.env.PORT || 3000;
 
+const client = new pg.Client(process.env.DATABASE_URL);
+client.connect()
+  .then(() => {
+    server.listen(PORT, () =>
+      console.log(`listening on ${PORT}`)
+    );
+  })
+
+// -------------------------------------
 function getlocation(request, response) {
     const city = request.query.city;
     console.log(city);
