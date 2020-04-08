@@ -41,7 +41,6 @@ server.get('/yelp', myYelp);
 
 // ----------------------------------------------------
 
-
 server.use('*', (req, res) => {
   res.status(500).send('Sorry, something went wrong');
 })
