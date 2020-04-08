@@ -3,7 +3,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const pg = require('pg');
-// const superagent = require('superagent');
 const PORT = process.env.PORT || 3000;
 
 const server = express();
@@ -15,7 +14,6 @@ client.connect()
       console.log(`listening on ${PORT}`)
     );
   })
-
 
 // ---------------------------------------------------
 const myLocation = require('./Location.js');
