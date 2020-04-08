@@ -3,6 +3,7 @@
 // ------------------------------------
 const superagent = require('superagent');
 
+
 function getMovies(req, res) {
     let arrayOfMovies = [];
     const moviesCity = req.query.query;
