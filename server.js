@@ -43,8 +43,8 @@ server.use((error, req, res) => {
   res.status(500).send(error);
 })
 
-server.listen(PORT, () =>
-  console.log(`listening on ${PORT}`)
-);
+// server.listen(PORT, () =>
+//   console.log(`listening on ${PORT}`)
+// );
 
 
